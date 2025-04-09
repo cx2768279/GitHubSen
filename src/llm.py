@@ -1,9 +1,13 @@
 import openai
-
+import os
 class LLM:
-    def __init__(self, api_key):
-        self.api_key = api_key
+    def __init__(self):
+        token = os.environ.get('deepseek_key')
+        self.api_key = token
         openai.api_key = self.api_key
+        openai.api_base = "https://api.deepseek.ai/v1"
+        openai.stream=False
+        openai.model='deepseek-reasoner'
 
     def summarize_isssues_prs(self, issues, pull_requests):
         prompt = (
@@ -19,7 +23,6 @@ class LLM:
             prompt += f"- {pr['title']} #{pr['number']}: {pr['body']}\n"
 
         response = openai.Completion.create(
-            engine="gpt-4",
             prompt=prompt,
             max_tokens=500,
         )
